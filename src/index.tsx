@@ -8,12 +8,10 @@ import { initialTheme } from './theme';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
-  <React.StrictMode>
-    <RecoilRoot>
-      <ThemeProvider theme={initialTheme}>
-        <App />
-        <GlobalStyles />
-      </ThemeProvider>
-    </RecoilRoot>
-  </React.StrictMode>
+  <RecoilRoot>
+    <ThemeProvider theme={initialTheme}>
+      <App />
+      <GlobalStyles />
+    </ThemeProvider>
+  </RecoilRoot>
 );
