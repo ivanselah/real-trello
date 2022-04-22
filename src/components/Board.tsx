@@ -1,3 +1,4 @@
+import React from 'react';
 import styled from 'styled-components';
 import { StateProps } from '../atoms';
 import { Droppable } from 'react-beautiful-dnd';
@@ -31,7 +32,8 @@ const BoardsWrapper = styled.div`
   padding: 20px;
   display: flex;
   flex-direction: column;
-  border-radius: 5px;
+  min-height: 300px;
+  border-radius: 15px;
 `;
 
 const Title = styled.h1`

@@ -6,18 +6,42 @@ import { toDoState } from './atoms';
 import Board from './components/Board';
 
 function App() {
-  const [toDos, setToDos] = useRecoilState(toDoState);
+  const [allBoards, setAllBoardsToDos] = useRecoilState(toDoState);
 
-  const onDragEnd = (info: DropResult) => {
-    console.log(info);
+  const onDragEnd = ({ destination, source }: DropResult) => {
+    if (!destination) return;
+    const boardId = destination.droppableId;
+    const currentBoard = [...allBoards[source.droppableId]];
+    const dragGrab = currentBoard[source.index];
+    if (source.droppableId === destination.droppableId) {
+      currentBoard.splice(source.index, 1);
+      currentBoard.splice(destination.index, 0, dragGrab);
+      setAllBoardsToDos((allBoards) => {
+        return {
+          ...allBoards,
+          [boardId]: currentBoard,
+        };
+      });
+    } else {
+      const targetBoard = [...allBoards[destination.droppableId]];
+      currentBoard.splice(source.index, 1);
+      targetBoard.splice(destination.index, 0, dragGrab);
+      setAllBoardsToDos((allBoards) => {
+        return {
+          ...allBoards,
+          [source.droppableId]: currentBoard,
+          [boardId]: targetBoard,
+        };
+      });
+    }
   };
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Wrapper>
         <Boards>
-          {Object.keys(toDos).map((key) => {
-            return <Board key={key} boardId={key} toDos={toDos[key]} />;
+          {Object.keys(allBoards).map((key) => {
+            return <Board key={key} boardId={key} toDos={allBoards[key]} />;
           })}
         </Boards>
       </Wrapper>
