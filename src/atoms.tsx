@@ -5,17 +5,23 @@ export type StateProps = {
   text: string;
 };
 
-interface IToDoState {
+export type ToDoState = {
   [key: string]: StateProps[];
-}
+};
 
-export const toDoState = atom<IToDoState>({
+export const REAL_TRELLO = 'REAL_TRELLO';
+
+const localStorageData: string = localStorage.getItem(REAL_TRELLO) || '{}';
+const parsedLocalStorageTodo = JSON.parse(localStorageData);
+
+export const toDoState = atom<ToDoState>({
   key: 'toDos',
-  default: {
-    toDo: [],
-    doing: [],
-    done: [],
-  },
+  default: parsedLocalStorageTodo,
+});
+
+export const boardTitleState = atom<string>({
+  key: 'boardTitleState',
+  default: '',
 });
 
 export const VisibleState = atom({

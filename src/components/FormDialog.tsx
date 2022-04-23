@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useRecoilState } from 'recoil';
-import { VisibleState } from '../atoms';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { boardTitleState, ToDoState, toDoState, VisibleState } from '../atoms';
 import { styled as muiStyled } from '@mui/material/styles';
 import { useForm } from 'react-hook-form';
 import ClearIcon from '@mui/icons-material/Clear';
+import { saveTodoInLocalStorage } from '../localStorage.utils';
 
 type Inputs = {
   boardName: string;
@@ -12,12 +13,20 @@ type Inputs = {
 
 function FormDialog() {
   const [isVisible, setIsVisible] = useRecoilState(VisibleState);
+  const setTodos = useSetRecoilState(toDoState);
+  const setBoardTitle = useSetRecoilState(boardTitleState);
   const { register, handleSubmit, setValue } = useForm<Inputs>();
 
   const handleClose = () => setIsVisible(false);
 
-  const onSumit = ({ boardName }: Inputs) => {
-    console.log(boardName);
+  const onSumit = ({ boardName }: Inputs): void => {
+    setTodos((todo: ToDoState) => {
+      const result: ToDoState = { [boardName]: [], ...todo };
+      saveTodoInLocalStorage(result);
+      return result;
+    });
+
+    setBoardTitle(boardName);
     setValue('boardName', '');
     handleClose();
   };
@@ -31,7 +40,7 @@ function FormDialog() {
           </CustomClearBox>
           <h1>보드추가</h1>
           <form onSubmit={handleSubmit(onSumit)}>
-            <input {...register('boardName', { required: true })} type='text' placeholder='보드명을 입력하세요.' />
+            <input {...register('boardName', { required: true })} type='text' placeholder='보드명을 입력하세요.' autoComplete='off' />
           </form>
         </CustomDialog>
       )}

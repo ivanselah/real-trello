@@ -51,11 +51,11 @@ function App() {
       <FormDialog />
       <DragDropContext onDragEnd={onDragEnd}>
         <Wrapper>
-          {/* <Boards>
+          <Boards>
             {Object.keys(allBoards).map((key) => {
               return <Board key={key} boardId={key} toDos={allBoards[key]} />;
             })}
-          </Boards> */}
+          </Boards>
         </Wrapper>
       </DragDropContext>
     </Container>
