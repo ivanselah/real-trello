@@ -12,13 +12,13 @@ interface IToDoState {
 export const toDoState = atom<IToDoState>({
   key: 'toDos',
   default: {
-    toDo: [
-      { id: 0, text: 'a' },
-      { id: 1, text: 'b' },
-      { id: 2, text: 'c' },
-      { id: 3, text: 'd' },
-    ],
+    toDo: [],
     doing: [],
     done: [],
   },
+});
+
+export const VisibleState = atom({
+  key: 'visible',
+  default: false,
 });
