@@ -24,8 +24,7 @@ function Board({ boardId, toDos }: BoardsProps) {
   const setTodosState = useSetRecoilState(toDoState);
   const setIsVisible = useSetRecoilState(removeModalIsVisible);
   const setSelectedBoardId = useSetRecoilState(selectedBoard);
-  const { register, handleSubmit, getValues, setValue } = useForm<CardInputs>();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const { register, handleSubmit, getValues, setValue, setFocus } = useForm<CardInputs>();
 
   const handleClose = (boardId: string) => {
     setIsVisible(true);
@@ -34,7 +33,7 @@ function Board({ boardId, toDos }: BoardsProps) {
 
   const onClickAdd = () => {
     setAddFormIsVisible((visible) => !visible);
-    inputRef.current?.focus();
+    setFocus('card');
   };
 
   const onSubmit = () => {
@@ -43,6 +42,7 @@ function Board({ boardId, toDos }: BoardsProps) {
       id: Date.now(),
       text: card,
     };
+    console.log(card);
     setTodosState((todos) => {
       const newTodos = {
         ...todos,
@@ -60,7 +60,7 @@ function Board({ boardId, toDos }: BoardsProps) {
       <Title>{boardId}</Title>
       <AddContentBtn onClick={onClickAdd}>내용 추가</AddContentBtn>
       <CustomForm addFormIsVisible={addFormIsVisible} onSubmit={handleSubmit(onSubmit)}>
-        <input {...register('card', { required: true })} ref={inputRef} type='text' autoComplete='off' placeholder='내용을 입력하세요' />
+        <input {...register('card', { required: true })} type='text' autoComplete='off' placeholder='내용을 입력하세요' />
       </CustomForm>
       <Droppable droppableId={boardId}>
         {(provided, snapshot) => (
