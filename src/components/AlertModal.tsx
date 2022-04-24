@@ -3,18 +3,33 @@ import ClearBtn from './shared/ClearBtn';
 import Button from '@mui/material/Button';
 import { styled as muiStyled } from '@mui/material/styles';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { removeModalIsVisible, selectedBoard } from '../atoms';
-import { removeTodoInLocalStorage } from '../localStorage.utils';
+import { removeModalIsVisible, selectedBoard, REAL_TRELLO, toDoState } from '../atoms';
+import { saveTodoInLocalStorage } from '../localStorage.utils';
+import { useCallback } from 'react';
 
 function AlertModal() {
   const setIsVisible = useSetRecoilState(removeModalIsVisible);
   const [selectedBoardId, setSelectedBoardId] = useRecoilState(selectedBoard);
+  const setToDoState = useSetRecoilState(toDoState);
   const handleClose = () => setIsVisible(false);
+
+  const removeTodoInLocalStorage = useCallback(
+    (boardId: string): void => {
+      const dataList = localStorage.getItem(REAL_TRELLO)!;
+      const copyDataList = { ...JSON.parse(dataList) };
+      delete copyDataList[boardId];
+      saveTodoInLocalStorage(copyDataList);
+      setToDoState(copyDataList);
+    },
+    [setToDoState]
+  );
+
   const clickRemoveBtn = () => {
     removeTodoInLocalStorage(selectedBoardId);
     setSelectedBoardId('');
     handleClose();
   };
+
   return (
     <ModalWrapper>
       <ModalBox>
