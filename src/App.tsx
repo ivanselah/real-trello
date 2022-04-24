@@ -9,6 +9,7 @@ import { styled as muiStyled } from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
 import FormDialog from './components/FormDialog';
 import AlertModal from './components/AlertModal';
+import Garbage from './components/Garbage';
 
 function App() {
   const [allBoards, setAllBoardsToDos] = useRecoilState(toDoState);
@@ -52,6 +53,7 @@ function App() {
       <FormDialog />
       {removeAlertIsVisible && <AlertModal />}
       <DragDropContext onDragEnd={onDragEnd}>
+        <Garbage />
         <Wrapper>
           <Boards>
             {Object.keys(allBoards).map((key) => {
@@ -86,7 +88,7 @@ const Boards = styled.div`
   grid-template-columns: repeat(3, 1fr);
 `;
 
-const AddListBtn = muiStyled(Button)({
+export const AddListBtn = muiStyled(Button)({
   position: 'absolute',
   right: '0',
   transform: 'translate(-50%, 100%)',

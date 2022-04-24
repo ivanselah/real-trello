@@ -37,7 +37,7 @@ function FormDialog() {
           <ClearBtn onClose={handleClose} />
           <h1>보드추가</h1>
           <form onSubmit={handleSubmit(onSumit)}>
-            <input {...register('boardName', { required: true })} type='text' placeholder='보드명을 입력하세요.' autoComplete='off' />
+            <input {...register('boardName', { required: true })} type='text' placeholder='보드명을 입력하세요' autoComplete='off' />
           </form>
         </CustomDialog>
       )}
