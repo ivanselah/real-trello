@@ -1,17 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
-import { toDoState, VisibleState } from './atoms';
+import { removeModalIsVisible, toDoState, VisibleState } from './atoms';
 import Board from './components/Board';
 import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
 import { styled as muiStyled } from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
 import FormDialog from './components/FormDialog';
+import AlertModal from './components/AlertModal';
 
 function App() {
   const [allBoards, setAllBoardsToDos] = useRecoilState(toDoState);
+  const removeAlertIsVisible = useRecoilValue(removeModalIsVisible);
   const setIsVisible = useSetRecoilState(VisibleState);
 
   const onDragEnd = ({ destination, source }: DropResult) => {
@@ -49,6 +50,7 @@ function App() {
         <AddIcon /> 보드 만들기
       </AddListBtn>
       <FormDialog />
+      {removeAlertIsVisible && <AlertModal />}
       <DragDropContext onDragEnd={onDragEnd}>
         <Wrapper>
           <Boards>

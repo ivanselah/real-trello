@@ -2,10 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { boardTitleState, ToDoState, toDoState, VisibleState } from '../atoms';
-import { styled as muiStyled } from '@mui/material/styles';
 import { useForm } from 'react-hook-form';
-import ClearIcon from '@mui/icons-material/Clear';
 import { saveTodoInLocalStorage } from '../localStorage.utils';
+import ClearBtn from './shared/ClearBtn';
 
 type Inputs = {
   boardName: string;
@@ -35,9 +34,7 @@ function FormDialog() {
     <>
       {isVisible && (
         <CustomDialog>
-          <CustomClearBox onClick={handleClose}>
-            <ClearIcon />
-          </CustomClearBox>
+          <ClearBtn onClose={handleClose} />
           <h1>보드추가</h1>
           <form onSubmit={handleSubmit(onSumit)}>
             <input {...register('boardName', { required: true })} type='text' placeholder='보드명을 입력하세요.' autoComplete='off' />
@@ -76,11 +73,5 @@ const CustomDialog = styled.div`
     }
   }
 `;
-
-const CustomClearBox = muiStyled('div')({
-  width: '100%',
-  textAlign: 'end',
-  cursor: 'pointer',
-});
 
 export default FormDialog;

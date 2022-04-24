@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { StateProps } from '../atoms';
+import { removeModalIsVisible, selectedBoard, StateProps } from '../atoms';
 import { Droppable } from 'react-beautiful-dnd';
 import DraggableCard from './DraggableCard';
+import { useForm } from 'react-hook-form';
+import ClearBtn from './shared/ClearBtn';
+import { useSetRecoilState } from 'recoil';
 
 type BoardsProps = {
   boardId: string;
@@ -10,9 +13,21 @@ type BoardsProps = {
 };
 
 function Board({ boardId, toDos }: BoardsProps) {
+  const setIsVisible = useSetRecoilState(removeModalIsVisible);
+  const setSelectedBoardId = useSetRecoilState(selectedBoard);
+
+  const handleClose = (boardId: string) => {
+    setIsVisible(true);
+    setSelectedBoardId(boardId);
+  };
+
   return (
     <BoardsWrapper>
+      <ClearBtn onClose={() => handleClose(boardId)} />
       <Title>{boardId}</Title>
+      <form>
+        <input />
+      </form>
       <Droppable droppableId={boardId}>
         {(provided, snapshot) => (
           <ul ref={provided.innerRef} {...provided.droppableProps}>

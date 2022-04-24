@@ -4,4 +4,5 @@ export const initialTheme: DefaultTheme = {
   bgColor: '#fab1a0',
   boardColor: '#DADFE9',
   cardColor: '#ffffff',
+  alertBgColor: '#00cec9',
 };
