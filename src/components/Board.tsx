@@ -42,7 +42,6 @@ function Board({ boardId, toDos }: BoardsProps) {
       id: Date.now(),
       text: card,
     };
-    console.log(card);
     setTodosState((todos) => {
       const newTodos = {
         ...todos,

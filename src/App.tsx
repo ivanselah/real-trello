@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { removeModalIsVisible, toDoState, VisibleState } from './atoms';
+import { saveTodoInLocalStorage } from './localStorage.utils';
 import Board from './components/Board';
 import Button from '@mui/material/Button';
 import { styled as muiStyled } from '@mui/material/styles';
@@ -31,18 +32,31 @@ function App() {
         };
       });
     } else {
-      const targetBoard = [...allBoards[destination.droppableId]];
       currentBoard.splice(source.index, 1);
-      targetBoard.splice(destination.index, 0, dragGrab);
-      setAllBoardsToDos((allBoards) => {
-        return {
-          ...allBoards,
-          [source.droppableId]: currentBoard,
-          [boardId]: targetBoard,
-        };
-      });
+      if (allBoards[destination.droppableId]) {
+        const targetBoard = [...allBoards[destination.droppableId]];
+        targetBoard.splice(destination.index, 0, dragGrab);
+        setAllBoardsToDos((allBoards) => {
+          return {
+            ...allBoards,
+            [source.droppableId]: currentBoard,
+            [boardId]: targetBoard,
+          };
+        });
+      } else {
+        setAllBoardsToDos((allBoards) => {
+          return {
+            ...allBoards,
+            [source.droppableId]: currentBoard,
+          };
+        });
+      }
     }
   };
+
+  useEffect(() => {
+    saveTodoInLocalStorage(allBoards);
+  }, [allBoards]);
 
   const openDialog = () => setIsVisible((visible) => !visible);
   return (
