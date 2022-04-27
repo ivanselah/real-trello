@@ -51,8 +51,9 @@ function Board({ boardId, toDos }: BoardsProps) {
       return newTodos;
     });
     setValue('card', '');
+    onClickAdd();
   };
-
+  // draggingFromThisWith={Boolean(snapshots.draggingFromThisWith)}
   return (
     <BoardsWrapper>
       <ClearBtn onClose={() => handleClose(boardId)} />
@@ -62,13 +63,13 @@ function Board({ boardId, toDos }: BoardsProps) {
         <input {...register('card', { required: true })} type='text' autoComplete='off' placeholder='내용을 입력하세요' />
       </CustomForm>
       <Droppable droppableId={boardId}>
-        {(provided, snapshot) => (
-          <ul ref={provided.innerRef} {...provided.droppableProps}>
+        {(provided, snapshots) => (
+          <ContainerList ref={provided.innerRef} {...provided.droppableProps} isDraggingOver={snapshots.isDraggingOver}>
             {toDos.map((toDo, index) => (
               <DraggableCard key={toDo.id} index={index} toDoId={toDo.id} toDoText={toDo.text} />
             ))}
             {provided.placeholder}
-          </ul>
+          </ContainerList>
         )}
       </Droppable>
     </BoardsWrapper>
@@ -120,5 +121,9 @@ const AddContentBtn = muiStyled(Button)({
     backgroundColor: '#fd79a8',
   },
 });
+
+const ContainerList = styled.ul<{ isDraggingOver: boolean }>`
+  background-color: ${(props) => (props.isDraggingOver ? 'red' : 'inherit')};
+`;
 
 export default Board;
