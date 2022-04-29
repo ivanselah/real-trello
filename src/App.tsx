@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { ThemeProvider } from 'styled-components';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
-import { removeModalIsVisible, toDoState, VisibleState } from './atoms';
+import { removeModalIsVisible, setBgColor, toDoState, VisibleState } from './atoms';
 import { saveTodoInLocalStorage } from './localStorage.utils';
 import Board from './components/Board';
 import Button from '@mui/material/Button';
@@ -11,9 +12,13 @@ import AddIcon from '@mui/icons-material/Add';
 import FormDialog from './components/FormDialog';
 import AlertModal from './components/AlertModal';
 import Garbage from './components/Garbage';
+import { initialTheme } from './theme';
+import GlobalStyles from './styles';
+import PickColor from './components/PickColor';
 
 function App() {
   const [allBoards, setAllBoardsToDos] = useRecoilState(toDoState);
+  const bgColor = useRecoilValue(setBgColor);
   const removeAlertIsVisible = useRecoilValue(removeModalIsVisible);
   const setIsVisible = useSetRecoilState(VisibleState);
 
@@ -58,25 +63,33 @@ function App() {
     saveTodoInLocalStorage(allBoards);
   }, [allBoards]);
 
-  const openDialog = () => setIsVisible((visible) => !visible);
+  const openDialog = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (e.target === e.currentTarget) {
+      setIsVisible((visible) => !visible);
+    }
+  };
   return (
-    <Container>
-      <AddListBtn variant='contained' onClick={openDialog}>
-        <AddIcon /> 보드 만들기
-      </AddListBtn>
-      <FormDialog />
-      {removeAlertIsVisible && <AlertModal />}
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Garbage />
-        <Wrapper>
-          <Boards>
-            {Object.keys(allBoards).map((key) => {
-              return <Board key={key} boardId={key} toDos={allBoards[key]} />;
-            })}
-          </Boards>
-        </Wrapper>
-      </DragDropContext>
-    </Container>
+    <ThemeProvider theme={initialTheme(bgColor)}>
+      <GlobalStyles />
+      <Container>
+        <AddListBtn variant='contained' onClick={openDialog}>
+          <AddIcon /> 보드 만들기
+          <PickColor />
+        </AddListBtn>
+        <FormDialog />
+        {removeAlertIsVisible && <AlertModal />}
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Garbage />
+          <Wrapper>
+            <Boards>
+              {Object.keys(allBoards).map((key) => {
+                return <Board key={key} boardId={key} toDos={allBoards[key]} />;
+              })}
+            </Boards>
+          </Wrapper>
+        </DragDropContext>
+      </Container>
+    </ThemeProvider>
   );
 }
 
@@ -105,7 +118,7 @@ const Boards = styled.div`
 export const AddListBtn = muiStyled(Button)({
   position: 'absolute',
   right: '0',
-  transform: 'translate(-50%, 100%)',
+  transform: 'translate(-50%, 160%)',
   padding: '10px 15px',
   color: '#000000',
   textTransform: 'none',

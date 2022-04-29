@@ -8,7 +8,6 @@ function Garbage() {
     <>
       <Droppable droppableId='garbage'>
         {(provided, snapshots) => {
-          console.log(snapshots);
           return (
             <IconContainer ref={provided.innerRef} {...provided.droppableProps} isDraggingOver={snapshots.isDraggingOver}>
               {snapshots.isDraggingOver ? <DeleteIcon sx={sx} /> : <DeleteOutlineIcon sx={sx} />}

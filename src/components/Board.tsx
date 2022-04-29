@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { removeModalIsVisible, selectedBoard, StateProps, toDoState } from '../atoms';
 import { Droppable } from 'react-beautiful-dnd';
@@ -25,6 +25,13 @@ function Board({ boardId, toDos }: BoardsProps) {
   const setIsVisible = useSetRecoilState(removeModalIsVisible);
   const setSelectedBoardId = useSetRecoilState(selectedBoard);
   const { register, handleSubmit, getValues, setValue, setFocus } = useForm<CardInputs>();
+  const [isLoad, setIsLoad] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoad(true);
+    }, 0);
+  }, []);
 
   const handleClose = (boardId: string) => {
     setIsVisible(true);
@@ -53,38 +60,41 @@ function Board({ boardId, toDos }: BoardsProps) {
     setValue('card', '');
     onClickAdd();
   };
-  // draggingFromThisWith={Boolean(snapshots.draggingFromThisWith)}
   return (
-    <BoardsWrapper>
-      <ClearBtn onClose={() => handleClose(boardId)} />
-      <Title>{boardId}</Title>
-      <AddContentBtn onClick={onClickAdd}>+ 내용 추가</AddContentBtn>
-      <CustomForm addFormIsVisible={addFormIsVisible} onSubmit={handleSubmit(onSubmit)}>
-        <input {...register('card', { required: true })} type='text' autoComplete='off' placeholder='내용을 입력하세요' />
-      </CustomForm>
-      <Droppable droppableId={boardId}>
-        {(provided, snapshots) => (
-          <ContainerList
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-            isDraggingOver={snapshots.isDraggingOver}
-            draggingFromThisWith={Boolean(snapshots.draggingFromThisWith)}
-          >
-            {toDos.map((toDo, index) => (
-              <DraggableCard key={toDo.id} index={index} toDoId={toDo.id} toDoText={toDo.text} />
-            ))}
-            {provided.placeholder}
-          </ContainerList>
-        )}
-      </Droppable>
-    </BoardsWrapper>
+    <>
+      {isLoad ? (
+        <BoardsWrapper>
+          <ClearBtn onClose={() => handleClose(boardId)} />
+          <Title>{boardId}</Title>
+          <AddContentBtn onClick={onClickAdd}>+ 내용 추가</AddContentBtn>
+          <CustomForm addFormIsVisible={addFormIsVisible} onSubmit={handleSubmit(onSubmit)}>
+            <input {...register('card', { required: true })} type='text' autoComplete='off' placeholder='내용을 입력하세요' />
+          </CustomForm>
+          <Droppable droppableId={boardId}>
+            {(provided, snapshots) => (
+              <ContainerList
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                isDraggingOver={snapshots.isDraggingOver}
+                draggingFromThisWith={Boolean(snapshots.draggingFromThisWith)}
+              >
+                {toDos.map((toDo, index) => (
+                  <DraggableCard key={toDo.id} index={index} toDoId={toDo.id} toDoText={toDo.text} />
+                ))}
+                {provided.placeholder}
+              </ContainerList>
+            )}
+          </Droppable>
+        </BoardsWrapper>
+      ) : null}
+    </>
   );
 }
 
 const BoardsWrapper = styled.div`
   max-width: 300px;
   background-color: ${(props) => props.theme.boardColor};
-  padding: 20px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   min-height: 300px;
@@ -135,6 +145,8 @@ const AddContentBtn = muiStyled(Button)({
 const ContainerList = styled.ul<{ isDraggingOver: boolean; draggingFromThisWith: boolean }>`
   background-color: ${(props) => (props.draggingFromThisWith ? '#ff6348' : props.isDraggingOver ? '#20bf6b' : 'inherit')};
   flex-grow: 1;
+  transition: background-color 0.3s ease-in-out;
+  padding: 10px;
 `;
 
 export default Board;

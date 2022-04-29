@@ -38,3 +38,8 @@ export const removeModalIsVisible = atom({
   key: 'removeModal',
   default: false,
 });
+
+export const setBgColor = atom({
+  key: 'setBgColor',
+  default: '#30336b',
+});

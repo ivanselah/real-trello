@@ -32,28 +32,29 @@ function FormDialog() {
 
   return (
     <>
-      {isVisible && (
-        <CustomDialog>
-          <ClearBtn onClose={handleClose} />
-          <h1>보드추가</h1>
-          <form onSubmit={handleSubmit(onSumit)}>
-            <input {...register('boardName', { required: true })} type='text' placeholder='보드명을 입력하세요' autoComplete='off' />
-          </form>
-        </CustomDialog>
-      )}
+      <CustomDialog isVisible={isVisible}>
+        <ClearBtn onClose={handleClose} />
+        <h1>보드추가</h1>
+        <form onSubmit={handleSubmit(onSumit)}>
+          <input {...register('boardName', { required: true })} type='text' placeholder='보드명을 입력하세요' autoComplete='off' />
+        </form>
+      </CustomDialog>
     </>
   );
 }
 
-const CustomDialog = styled.div`
+const CustomDialog = styled.div<{ isVisible: boolean }>`
   background-color: #dfe6e9;
   position: absolute;
   right: 0;
-  transform: translate(-20%, 70%);
+  transform: translate(-20%, 100%);
   min-width: 250px;
   min-height: 100px;
   padding: 25px 20px;
   border-radius: 10px;
+  opacity: ${(props) => (props.isVisible ? '1' : '0')};
+  z-index: ${(props) => !props.isVisible && '-1'};
+  transition: opacity 0.3s ease-in-out;
 
   h1 {
     font-weight: 500;
