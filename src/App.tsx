@@ -74,7 +74,6 @@ function App() {
       <Container>
         <AddListBtn variant='contained' onClick={openDialog}>
           <AddIcon /> 보드 만들기
-          <PickColor />
         </AddListBtn>
         <FormDialog />
         {removeAlertIsVisible && <AlertModal />}
@@ -88,6 +87,7 @@ function App() {
             </Boards>
           </Wrapper>
         </DragDropContext>
+        <PickColor />
       </Container>
     </ThemeProvider>
   );

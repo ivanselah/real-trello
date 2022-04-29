@@ -24,7 +24,9 @@ function PickColor() {
 
 const Container = styled.div`
   position: absolute;
-  transform: translateX(-300px);
+  left: 0;
+  bottom: 0;
+  transform: translate(30px, -50px);
   max-width: 300px;
   display: flex;
   list-style-type: none;

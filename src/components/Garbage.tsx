@@ -5,17 +5,15 @@ import styled from 'styled-components';
 
 function Garbage() {
   return (
-    <>
-      <Droppable droppableId='garbage'>
-        {(provided, snapshots) => {
-          return (
-            <IconContainer ref={provided.innerRef} {...provided.droppableProps} isDraggingOver={snapshots.isDraggingOver}>
-              {snapshots.isDraggingOver ? <DeleteIcon sx={sx} /> : <DeleteOutlineIcon sx={sx} />}
-            </IconContainer>
-          );
-        }}
-      </Droppable>
-    </>
+    <Droppable droppableId='garbage'>
+      {(provided, snapshots) => {
+        return (
+          <IconContainer ref={provided.innerRef} {...provided.droppableProps} isDraggingOver={snapshots.isDraggingOver}>
+            {snapshots.isDraggingOver ? <DeleteIcon sx={sx} /> : <DeleteOutlineIcon sx={sx} />}
+          </IconContainer>
+        );
+      }}
+    </Droppable>
   );
 }
 
