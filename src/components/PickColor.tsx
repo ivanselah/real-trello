@@ -2,18 +2,22 @@ import React from 'react';
 import { useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { setBgColor } from '../atoms';
+import { saveColorInLocalStorage } from '../localStorage.utils';
+
+const colorArray = ['#fc5c65', '#45aaf2', '#4b6584', '#d1d8e0', '#1dd1a1'];
 
 function PickColor() {
-  const colorArray = ['#686de0', '#1e90ff', '#ff6b81', '#30336b', '#1dd1a1'];
   const setBackGroundColor = useSetRecoilState(setBgColor);
 
   const handleColor = (color: string) => {
     setBackGroundColor(color);
+    saveColorInLocalStorage({ id: 'bgColor', color });
   };
 
   return (
     <React.Fragment>
       <Container>
+        <h1>배경</h1>
         {colorArray.map((color) => (
           <ColorBox key={color} bgColor={color} onClick={() => handleColor(color)}></ColorBox>
         ))}
@@ -29,6 +33,8 @@ const Container = styled.div`
   transform: translate(30px, -50px);
   max-width: 300px;
   display: flex;
+  align-items: center;
+  font-weight: bold;
   list-style-type: none;
   cursor: pointer;
   background-color: #ffffff;

@@ -22,7 +22,7 @@ const IconContainer = styled.div<{ isDraggingOver: boolean }>`
   transform: translate(50%, 40%);
   width: 100px;
   height: 100px;
-  color: ${(props) => props.theme.boardColor};
+  color: ${(props) => props.theme.cardColor};
   display: flex;
   justify-content: center;
   align-items: center;

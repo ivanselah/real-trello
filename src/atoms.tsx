@@ -5,14 +5,23 @@ export type StateProps = {
   text: string;
 };
 
+export type ColorProps = {
+  id: 'bgColor';
+  color: string;
+};
+
 export type ToDoState = {
   [key: string]: StateProps[];
 };
 
 export const REAL_TRELLO = 'REAL_TRELLO';
+export const REAL_TRELLO_COLOR = 'REAL_TRELLO_COLOR';
 
-const localStorageData: string = localStorage.getItem(REAL_TRELLO) || '{}';
-const parsedLocalStorageTodo = JSON.parse(localStorageData);
+const localStorageStateData: string = localStorage.getItem(REAL_TRELLO) || '{}';
+const localStorageColorData: string = localStorage.getItem(REAL_TRELLO_COLOR) || '{}';
+
+const parsedLocalStorageTodo = JSON.parse(localStorageStateData);
+const parsedLocalStorageColor: ColorProps = JSON.parse(localStorageColorData);
 
 export const toDoState = atom<ToDoState>({
   key: 'toDos',
@@ -41,5 +50,5 @@ export const removeModalIsVisible = atom({
 
 export const setBgColor = atom({
   key: 'setBgColor',
-  default: '#30336b',
+  default: parsedLocalStorageColor.color ?? '#d1d8e0',
 });
