@@ -25,6 +25,14 @@ const Card = styled.li`
   margin-bottom: 10px;
   padding: 10px;
   border-radius: 5px;
+  box-shadow: 1px 2px 5px 0px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 1px 2px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 1px 2px 5px 0px rgba(0, 0, 0, 0.75);
+  font-weight: 400;
+  &:hover {
+    background-color: #f1f2f6;
+  }
+  word-wrap: break-word;
 `;
 
 export default React.memo(DraggableCard);

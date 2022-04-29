@@ -58,13 +58,18 @@ function Board({ boardId, toDos }: BoardsProps) {
     <BoardsWrapper>
       <ClearBtn onClose={() => handleClose(boardId)} />
       <Title>{boardId}</Title>
-      <AddContentBtn onClick={onClickAdd}>내용 추가</AddContentBtn>
+      <AddContentBtn onClick={onClickAdd}>+ 내용 추가</AddContentBtn>
       <CustomForm addFormIsVisible={addFormIsVisible} onSubmit={handleSubmit(onSubmit)}>
         <input {...register('card', { required: true })} type='text' autoComplete='off' placeholder='내용을 입력하세요' />
       </CustomForm>
       <Droppable droppableId={boardId}>
         {(provided, snapshots) => (
-          <ContainerList ref={provided.innerRef} {...provided.droppableProps} isDraggingOver={snapshots.isDraggingOver}>
+          <ContainerList
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            isDraggingOver={snapshots.isDraggingOver}
+            draggingFromThisWith={Boolean(snapshots.draggingFromThisWith)}
+          >
             {toDos.map((toDo, index) => (
               <DraggableCard key={toDo.id} index={index} toDoId={toDo.id} toDoText={toDo.text} />
             ))}
@@ -77,6 +82,7 @@ function Board({ boardId, toDos }: BoardsProps) {
 }
 
 const BoardsWrapper = styled.div`
+  max-width: 300px;
   background-color: ${(props) => props.theme.boardColor};
   padding: 20px;
   display: flex;
@@ -86,17 +92,20 @@ const BoardsWrapper = styled.div`
 `;
 
 const CustomForm = styled.form<{ addFormIsVisible: boolean }>`
-  width: 100%;
   margin-bottom: 20px;
   input {
+    padding: 0;
     margin-top: 15px;
     border-radius: 5px;
-    min-width: 285px;
+    min-width: 300px;
     height: 35px;
     border: none;
     text-align: center;
-    transform: ${(props) => (props.addFormIsVisible ? 'translateY(0)' : 'translateY(-140%)')};
-    transition: transform 0.3s ease-in-out;
+    transform: ${(props) => (props.addFormIsVisible ? 'translateY(0)' : 'translateY(-150%)')};
+    &:focus {
+      opacity: ${(props) => !props.addFormIsVisible && '0'};
+    }
+    transition: all 0.3s ease-in-out;
     &::placeholder {
       padding: 10px;
       font-size: 15px;
@@ -112,6 +121,7 @@ const Title = styled.h1`
 `;
 
 const AddContentBtn = muiStyled(Button)({
+  width: '300px',
   height: '38px',
   zIndex: '1',
   color: '#000000',
@@ -122,8 +132,9 @@ const AddContentBtn = muiStyled(Button)({
   },
 });
 
-const ContainerList = styled.ul<{ isDraggingOver: boolean }>`
-  background-color: ${(props) => (props.isDraggingOver ? 'red' : 'inherit')};
+const ContainerList = styled.ul<{ isDraggingOver: boolean; draggingFromThisWith: boolean }>`
+  background-color: ${(props) => (props.draggingFromThisWith ? '#ff6348' : props.isDraggingOver ? '#20bf6b' : 'inherit')};
+  flex-grow: 1;
 `;
 
 export default Board;

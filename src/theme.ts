@@ -1,8 +1,8 @@
 import { DefaultTheme } from 'styled-components';
 
 export const initialTheme: DefaultTheme = {
-  bgColor: '#fab1a0',
-  boardColor: '#DADFE9',
+  bgColor: '#1e272e',
+  boardColor: '#E0E0E0',
   cardColor: '#ffffff',
   alertBgColor: '#00cec9',
 };
