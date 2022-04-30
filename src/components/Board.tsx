@@ -4,10 +4,11 @@ import { removeModalIsVisible, selectedBoard, StateProps, toDoState } from '../a
 import { Droppable } from 'react-beautiful-dnd';
 import DraggableCard from './DraggableCard';
 import { useForm } from 'react-hook-form';
-import ClearBtn from './shared/ClearBtn';
 import { useSetRecoilState } from 'recoil';
 import Button from '@mui/material/Button';
 import { saveTodoInLocalStorage } from '../localStorage.utils';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import ClearIcon from '@mui/icons-material/Clear';
 
 type BoardsProps = {
   boardId: string;
@@ -18,6 +19,72 @@ type CardInputs = {
   card: string;
 };
 
+function DropDown({ handleRemove, boardId, handleClose }: { handleRemove: (boardId: string) => void; boardId: string; handleClose: () => void }) {
+  return (
+    <DropDownContainer>
+      <Navigator>
+        <div></div>
+        <h1>Setting</h1>
+        <ClearIcon className='exitIcon' onClick={handleClose} />
+      </Navigator>
+      <BorderLine></BorderLine>
+      <MenuList>
+        <li onClick={() => handleRemove(boardId)}>Delete...</li>
+      </MenuList>
+      {/* <ClearBtn onClose={() => handleRemove(boardId)} /> */}
+    </DropDownContainer>
+  );
+}
+
+const DropDownContainer = styled.div`
+  z-index: 1;
+  position: absolute;
+  left: 80px;
+  top: 60px;
+  width: 200px;
+  height: 300px;
+  background-color: ${(props) => props.theme.bgColor};
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 1px 2px 5px 0px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 1px 2px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 1px 2px 5px 0px rgba(0, 0, 0, 0.75);
+`;
+
+const Navigator = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 17px;
+  font-weight: bold;
+  color: white;
+  div {
+    width: 20px;
+  }
+  margin-bottom: 10px;
+  .exitIcon {
+    cursor: pointer;
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+`;
+
+const BorderLine = styled.div`
+  border: 1px solid white;
+  opacity: 0.5;
+`;
+
+const MenuList = styled.ul`
+  color: white;
+  font-weight: 400;
+  padding: 15px;
+  li:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  cursor: pointer;
+`;
+
 function Board({ boardId, toDos }: BoardsProps) {
   const [addFormIsVisible, setAddFormIsVisible] = useState(false);
   const setTodosState = useSetRecoilState(toDoState);
@@ -25,6 +92,7 @@ function Board({ boardId, toDos }: BoardsProps) {
   const setSelectedBoardId = useSetRecoilState(selectedBoard);
   const { register, handleSubmit, getValues, setValue, setFocus } = useForm<CardInputs>();
   const [isLoad, setIsLoad] = useState(false);
+  const [isDropDownVisible, setIsDropDownVisible] = useState(false);
 
   useEffect(() => {
     setTimeout(() => {
@@ -32,9 +100,13 @@ function Board({ boardId, toDos }: BoardsProps) {
     }, 0);
   }, []);
 
-  const handleClose = (boardId: string) => {
+  const handleRemove = (boardId: string) => {
     setIsVisible(true);
     setSelectedBoardId(boardId);
+  };
+
+  const handleClose = () => {
+    setIsDropDownVisible((visible) => !visible);
   };
 
   const onClickAdd = () => {
@@ -63,11 +135,14 @@ function Board({ boardId, toDos }: BoardsProps) {
     <>
       {isLoad ? (
         <Container>
-          <ClearBtn onClose={() => handleClose(boardId)} />
+          {isDropDownVisible && <DropDown handleRemove={() => handleRemove(boardId)} boardId={boardId} handleClose={handleClose} />}
           <Droppable droppableId={boardId}>
             {(provided, snapshots) => (
               <BoardsWrapper>
-                <Title>{boardId}</Title>
+                <TitleContainer>
+                  <Title>{boardId}</Title>
+                  <MoreHorizCustomIcon onClick={handleClose} />
+                </TitleContainer>
                 {toDos.length ? <CardCount>{`${toDos.length} cards`}</CardCount> : <p></p>}
                 <ContainerList
                   ref={provided.innerRef}
@@ -144,9 +219,25 @@ const CustomForm = styled.form<{ addFormIsVisible: boolean }>`
   }
 `;
 
+const TitleContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px;
+`;
+
+const MoreHorizCustomIcon = styled(MoreHorizIcon)`
+  &:hover {
+    background-color: ${(props) => props.theme.cardColor};
+  }
+  opacity: 0.5;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+`;
+
 const Title = styled.h1`
   font-weight: 900;
-  font-size: 25px;
+  font-size: 17px;
   text-align: center;
   margin: 20px 0;
 `;
