@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { ThemeProvider } from 'styled-components';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -7,7 +7,6 @@ import { removeModalIsVisible, setBgColor, toDoState, VisibleState } from './ato
 import { saveTodoInLocalStorage } from './localStorage.utils';
 import Board from './components/Board';
 import Button from '@mui/material/Button';
-import { styled as muiStyled } from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
 import FormDialog from './components/FormDialog';
 import AlertModal from './components/AlertModal';
@@ -79,15 +78,15 @@ function App() {
         {removeAlertIsVisible && <AlertModal />}
         <DragDropContext onDragEnd={onDragEnd}>
           <Garbage />
+          <PickColor />
           <Wrapper>
-            <Boards>
+            <Boards boardCount={Object.keys(allBoards).length}>
               {Object.keys(allBoards).map((key) => {
                 return <Board key={key} boardId={key} toDos={allBoards[key]} />;
               })}
             </Boards>
           </Wrapper>
         </DragDropContext>
-        <PickColor />
       </Container>
     </ThemeProvider>
   );
@@ -101,30 +100,29 @@ const Container = styled.div`
 
 const Wrapper = styled.div`
   display: flex;
-  max-width: 1000px;
-  margin: 0 auto;
-  justify-content: center;
   align-items: center;
-  height: 100vh;
+  overflow-x: scroll;
 `;
 
-const Boards = styled.div`
+const Boards = styled.div<{ boardCount: number }>`
   display: grid;
-  width: 100%;
-  gap: 10px;
-  grid-template-columns: repeat(3, 1fr);
+  height: 1000px;
+  margin: 0 5px;
+  margin-top: 180px;
+  padding-bottom: 20px;
+  grid-template-columns: repeat(${(props) => props.boardCount}, auto);
 `;
 
-export const AddListBtn = muiStyled(Button)({
-  position: 'absolute',
-  right: '0',
-  transform: 'translate(-50%, 160%)',
-  padding: '10px 15px',
-  color: '#000000',
-  textTransform: 'none',
-  backgroundColor: '#ffffff',
-  '&:hover': {
-    color: '#ffffff',
-    backgroundColor: '#fd79a8',
-  },
-});
+export const AddListBtn = styled(Button)`
+  position: absolute;
+  right: 0;
+  transform: translate(-50%, 160%);
+  padding: 10px 15px;
+  color: #000000;
+  text-transform: none;
+  background-color: #ffffff;
+  &:hover {
+    color: #ffffff;
+    background-color: #fd79a8;
+  }
+`;

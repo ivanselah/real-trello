@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { setBgColor } from '../atoms';
 import { saveColorInLocalStorage } from '../localStorage.utils';
 
-const colorArray = ['#fc5c65', '#45aaf2', '#4b6584', '#d1d8e0', '#1dd1a1'];
+const COLOR_ARRAY = ['#fc5c65', '#45aaf2', '#4b6584', '#f7b731', '#1dd1a1'];
 
 function PickColor() {
   const setBackGroundColor = useSetRecoilState(setBgColor);
@@ -18,7 +18,7 @@ function PickColor() {
     <React.Fragment>
       <Container>
         <h1>배경</h1>
-        {colorArray.map((color) => (
+        {COLOR_ARRAY.map((color) => (
           <ColorBox key={color} bgColor={color} onClick={() => handleColor(color)}></ColorBox>
         ))}
       </Container>
@@ -29,8 +29,8 @@ function PickColor() {
 const Container = styled.div`
   position: absolute;
   left: 0;
-  bottom: 0;
-  transform: translate(30px, -50px);
+  top: 0;
+  transform: translate(300px, 50px);
   max-width: 300px;
   display: flex;
   align-items: center;

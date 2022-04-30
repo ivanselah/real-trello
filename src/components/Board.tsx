@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { removeModalIsVisible, selectedBoard, StateProps, toDoState } from '../atoms';
 import { Droppable } from 'react-beautiful-dnd';
@@ -7,7 +7,6 @@ import { useForm } from 'react-hook-form';
 import ClearBtn from './shared/ClearBtn';
 import { useSetRecoilState } from 'recoil';
 import Button from '@mui/material/Button';
-import { styled as muiStyled } from '@mui/material/styles';
 import { saveTodoInLocalStorage } from '../localStorage.utils';
 
 type BoardsProps = {
@@ -63,59 +62,81 @@ function Board({ boardId, toDos }: BoardsProps) {
   return (
     <>
       {isLoad ? (
-        <BoardsWrapper>
+        <Container>
           <ClearBtn onClose={() => handleClose(boardId)} />
-          <Title>{boardId}</Title>
-          <AddContentBtn onClick={onClickAdd}>+ 내용 추가</AddContentBtn>
-          <CustomForm addFormIsVisible={addFormIsVisible} onSubmit={handleSubmit(onSubmit)}>
-            <input {...register('card', { required: true })} type='text' autoComplete='off' placeholder='내용을 입력하세요' />
-          </CustomForm>
           <Droppable droppableId={boardId}>
             {(provided, snapshots) => (
-              <ContainerList
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-                isDraggingOver={snapshots.isDraggingOver}
-                draggingFromThisWith={Boolean(snapshots.draggingFromThisWith)}
-              >
-                {toDos.map((toDo, index) => (
-                  <DraggableCard key={toDo.id} index={index} toDoId={toDo.id} toDoText={toDo.text} />
-                ))}
-                {provided.placeholder}
-              </ContainerList>
+              <BoardsWrapper>
+                <Title>{boardId}</Title>
+                {toDos.length ? <CardCount>{`${toDos.length} cards`}</CardCount> : <p></p>}
+                <ContainerList
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                  isDraggingOver={snapshots.isDraggingOver}
+                  draggingFromThisWith={Boolean(snapshots.draggingFromThisWith)}
+                >
+                  {toDos.map((toDo, index) => (
+                    <DraggableCard key={toDo.id} index={index} toDoId={toDo.id} toDoText={toDo.text} />
+                  ))}
+                  {provided.placeholder}
+                </ContainerList>
+              </BoardsWrapper>
             )}
           </Droppable>
-        </BoardsWrapper>
+          <TextareaContainer>
+            <AddContentBtn onClick={onClickAdd}>+ 카드 추가</AddContentBtn>
+            <CustomForm addFormIsVisible={addFormIsVisible} onSubmit={handleSubmit(onSubmit)}>
+              <input {...register('card', { required: true })} autoComplete='off' type='text' placeholder='여기에 내용을 입력하세요' />
+            </CustomForm>
+          </TextareaContainer>
+        </Container>
       ) : null}
     </>
   );
 }
 
-const BoardsWrapper = styled.div`
-  max-width: 300px;
-  background-color: ${(props) => props.theme.boardColor};
+const Container = styled.div`
+  position: relative;
   padding: 10px;
+  margin: 0 5px;
+  width: 300px;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    width: 7px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: ${(props) => props.theme.boardColor};
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background-clip: padding-box;
+  }
+`;
+
+const BoardsWrapper = styled.div`
+  background-color: ${(props) => props.theme.boardColor};
+  max-width: 300px;
   display: flex;
   flex-direction: column;
-  min-height: 300px;
-  border-radius: 15px;
+`;
+
+const TextareaContainer = styled.div`
+  background-color: ${(props) => props.theme.boardColor};
+  padding: 10px;
 `;
 
 const CustomForm = styled.form<{ addFormIsVisible: boolean }>`
-  margin-bottom: 20px;
+  padding-top: 10px;
+  padding-right: 5px;
+  height: ${(props) => !props.addFormIsVisible && '0px'};
   input {
-    padding: 0;
-    margin-top: 15px;
+    opacity: ${(props) => (props.addFormIsVisible ? '1' : '0')};
+    text-align: left;
+    min-height: 70px;
     border-radius: 5px;
-    min-width: 300px;
+    background-color: ${(props) => props.theme.cardColor};
+    min-width: 100%;
     height: 35px;
     border: none;
-    text-align: center;
-    transform: ${(props) => (props.addFormIsVisible ? 'translateY(0)' : 'translateY(-150%)')};
-    &:focus {
-      opacity: ${(props) => !props.addFormIsVisible && '0'};
-    }
-    transition: all 0.3s ease-in-out;
     &::placeholder {
       padding: 10px;
       font-size: 15px;
@@ -127,26 +148,32 @@ const Title = styled.h1`
   font-weight: 900;
   font-size: 25px;
   text-align: center;
-  margin-bottom: 10px;
+  margin: 20px 0;
 `;
 
-const AddContentBtn = muiStyled(Button)({
-  width: '300px',
-  height: '38px',
-  zIndex: '1',
-  color: '#000000',
-  backgroundColor: '#ffffff',
-  '&:hover': {
-    color: '#ffffff',
-    backgroundColor: '#fd79a8',
-  },
-});
+const CardCount = styled.p`
+  font-weight: bold;
+  padding: 0 15px;
+  color: ${(props) => props.theme.bgColor};
+`;
+
+const AddContentBtn = styled(Button)`
+  width: 100px;
+  height: 38px;
+  z-index: 1;
+  color: #ffffff;
+  background-color: ${(props) => props.theme.bgColor};
+  &:hover {
+    background-color: ${(props) => props.theme.bgColor};
+  }
+`;
 
 const ContainerList = styled.ul<{ isDraggingOver: boolean; draggingFromThisWith: boolean }>`
   background-color: ${(props) => (props.draggingFromThisWith ? '#ff6348' : props.isDraggingOver ? '#20bf6b' : 'inherit')};
   flex-grow: 1;
   transition: background-color 0.3s ease-in-out;
   padding: 10px;
+  height: calc(100% - 30px);
 `;
 
 export default Board;

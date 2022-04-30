@@ -53,7 +53,7 @@ const CustomDialog = styled.div<{ isVisible: boolean }>`
   padding: 25px 20px;
   border-radius: 10px;
   opacity: ${(props) => (props.isVisible ? '1' : '0')};
-  z-index: ${(props) => !props.isVisible && '-1'};
+  z-index: ${(props) => (!props.isVisible ? '-1' : '2')};
   transition: opacity 0.3s ease-in-out;
 
   h1 {
