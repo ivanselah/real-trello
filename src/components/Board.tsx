@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { removeModalIsVisible, selectedBoard, StateProps, toDoState } from '../atoms';
-import { Droppable } from 'react-beautiful-dnd';
+import { Draggable, Droppable } from 'react-beautiful-dnd';
 import DraggableCard from './DraggableCard';
 import { useForm } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
@@ -31,13 +31,12 @@ function DropDown({ handleRemove, boardId, handleClose }: { handleRemove: (board
       <MenuList>
         <li onClick={() => handleRemove(boardId)}>Delete...</li>
       </MenuList>
-      {/* <ClearBtn onClose={() => handleRemove(boardId)} /> */}
     </DropDownContainer>
   );
 }
 
 const DropDownContainer = styled.div`
-  z-index: 1;
+  z-index: 2;
   position: absolute;
   left: 80px;
   top: 60px;
@@ -185,6 +184,7 @@ const Container = styled.div`
     border-radius: 10px;
     background-clip: padding-box;
   }
+  height: 850px;
 `;
 
 const BoardsWrapper = styled.div`

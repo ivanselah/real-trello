@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { boardTitleState, ToDoState, toDoState, VisibleState } from '../atoms';
 import { useForm } from 'react-hook-form';
 import { saveTodoInLocalStorage } from '../localStorage.utils';
-import ClearBtn from './shared/ClearBtn';
+import ClearBtn from './ClearBtn';
 
 type Inputs = {
   boardName: string;
@@ -14,7 +14,7 @@ function FormDialog() {
   const [isVisible, setIsVisible] = useRecoilState(VisibleState);
   const setTodos = useSetRecoilState(toDoState);
   const setBoardTitle = useSetRecoilState(boardTitleState);
-  const { register, handleSubmit, setValue } = useForm<Inputs>();
+  const { register, handleSubmit, setValue, setFocus } = useForm<Inputs>();
 
   const handleClose = () => setIsVisible(false);
 
@@ -30,12 +30,16 @@ function FormDialog() {
     handleClose();
   };
 
+  useEffect(() => {
+    isVisible && setFocus('boardName');
+  }, [isVisible, setFocus]);
+
   return (
     <>
       <CustomDialog isVisible={isVisible}>
         <ClearBtn onClose={handleClose} />
         <h1>보드추가</h1>
-        <form onSubmit={handleSubmit(onSumit)}>
+        <form className='formContainer' onSubmit={handleSubmit(onSumit)}>
           <input {...register('boardName', { required: true })} type='text' placeholder='보드명을 입력하세요' autoComplete='off' />
         </form>
       </CustomDialog>
@@ -55,6 +59,14 @@ const CustomDialog = styled.div<{ isVisible: boolean }>`
   opacity: ${(props) => (props.isVisible ? '1' : '0')};
   z-index: ${(props) => (!props.isVisible ? '-1' : '2')};
   transition: opacity 0.3s ease-in-out;
+  box-shadow: 1px 2px 5px 0px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 1px 2px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 1px 2px 5px 0px rgba(0, 0, 0, 0.75);
+
+  .formContainer {
+    height: 50px;
+    background-color: ${(props) => props.theme.bgColor};
+  }
 
   h1 {
     font-weight: 500;

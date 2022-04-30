@@ -1,7 +1,6 @@
 import styled from 'styled-components';
-import ClearBtn from './shared/ClearBtn';
+import ClearBtn from './ClearBtn';
 import Button from '@mui/material/Button';
-import { styled as muiStyled } from '@mui/material/styles';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { removeModalIsVisible, selectedBoard, REAL_TRELLO, toDoState } from '../atoms';
 import { saveTodoInLocalStorage } from '../localStorage.utils';
@@ -51,7 +50,7 @@ const ModalWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2;
+  z-index: 3;
 `;
 
 const ModalBox = styled.div`
@@ -68,13 +67,13 @@ const ModalBox = styled.div`
   }
 `;
 
-const RemoveBtn = muiStyled(Button)({
-  color: '#000000',
-  backgroundColor: '#ffffff',
-  '&:hover': {
-    color: '#ffffff',
-    backgroundColor: '#fd79a8',
-  },
-});
+const RemoveBtn = styled(Button)`
+  color: #000000;
+  background-color: #ffffff;
+  &:hover {
+    color: #ffffff;
+    background-color: ${(props) => props.theme.bgColor};
+  }
+`;
 
 export default AlertModal;

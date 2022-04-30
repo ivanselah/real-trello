@@ -17,7 +17,7 @@ function PickColor() {
   return (
     <React.Fragment>
       <Container>
-        <h1>배경</h1>
+        <h1>컬러</h1>
         {COLOR_ARRAY.map((color) => (
           <ColorBox key={color} bgColor={color} onClick={() => handleColor(color)}></ColorBox>
         ))}

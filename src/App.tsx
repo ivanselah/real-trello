@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { ThemeProvider } from 'styled-components';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { DragDropContext, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
 import { removeModalIsVisible, setBgColor, toDoState, VisibleState } from './atoms';
 import { saveTodoInLocalStorage } from './localStorage.utils';
 import Board from './components/Board';
@@ -14,6 +14,7 @@ import Garbage from './components/Garbage';
 import { initialTheme } from './theme';
 import GlobalStyles from './styles';
 import PickColor from './components/PickColor';
+import PanToolIcon from '@mui/icons-material/PanTool';
 
 function App() {
   const [allBoards, setAllBoardsToDos] = useRecoilState(toDoState);
@@ -21,39 +22,47 @@ function App() {
   const removeAlertIsVisible = useRecoilValue(removeModalIsVisible);
   const setIsVisible = useSetRecoilState(VisibleState);
 
-  const onDragEnd = ({ destination, source }: DropResult) => {
+  const onDragEnd = ({ destination, source, type }: DropResult) => {
+    console.log(destination, source);
     if (!destination) return;
-    const boardId = destination.droppableId;
-    const currentBoard = [...allBoards[source.droppableId]];
-    const dragGrab = currentBoard[source.index];
-    if (source.droppableId === destination.droppableId) {
-      currentBoard.splice(source.index, 1);
-      currentBoard.splice(destination.index, 0, dragGrab);
-      setAllBoardsToDos((allBoards) => {
-        return {
-          ...allBoards,
-          [boardId]: currentBoard,
-        };
-      });
+    if (source.droppableId === 'boards-box' && type === 'COLUMN') {
+      const newAllBoardsArray = Object.entries(allBoards);
+      const [grabData] = newAllBoardsArray.splice(source.index, 1);
+      newAllBoardsArray.splice(destination.index, 0, grabData);
+      setAllBoardsToDos(Object.fromEntries(newAllBoardsArray));
     } else {
-      currentBoard.splice(source.index, 1);
-      if (allBoards[destination.droppableId]) {
-        const targetBoard = [...allBoards[destination.droppableId]];
-        targetBoard.splice(destination.index, 0, dragGrab);
+      const boardId = destination.droppableId;
+      const currentBoard = [...allBoards[source.droppableId]];
+      const dragGrab = currentBoard[source.index];
+      if (source.droppableId === destination.droppableId) {
+        currentBoard.splice(source.index, 1);
+        currentBoard.splice(destination.index, 0, dragGrab);
         setAllBoardsToDos((allBoards) => {
           return {
             ...allBoards,
-            [source.droppableId]: currentBoard,
-            [boardId]: targetBoard,
+            [boardId]: currentBoard,
           };
         });
       } else {
-        setAllBoardsToDos((allBoards) => {
-          return {
-            ...allBoards,
-            [source.droppableId]: currentBoard,
-          };
-        });
+        currentBoard.splice(source.index, 1);
+        if (allBoards[destination.droppableId]) {
+          const targetBoard = [...allBoards[destination.droppableId]];
+          targetBoard.splice(destination.index, 0, dragGrab);
+          setAllBoardsToDos((allBoards) => {
+            return {
+              ...allBoards,
+              [source.droppableId]: currentBoard,
+              [boardId]: targetBoard,
+            };
+          });
+        } else {
+          setAllBoardsToDos((allBoards) => {
+            return {
+              ...allBoards,
+              [source.droppableId]: currentBoard,
+            };
+          });
+        }
       }
     }
   };
@@ -80,11 +89,27 @@ function App() {
           <Garbage />
           <PickColor />
           <Wrapper>
-            <Boards boardCount={Object.keys(allBoards).length}>
-              {Object.keys(allBoards).map((key) => {
-                return <Board key={key} boardId={key} toDos={allBoards[key]} />;
-              })}
-            </Boards>
+            <Droppable droppableId='boards-box' direction='horizontal' type='COLUMN'>
+              {(provided) => (
+                <Boards boardCount={Object.keys(allBoards).length} ref={provided.innerRef}>
+                  {Object.keys(allBoards).map((key, index) => {
+                    return (
+                      <Draggable draggableId={key} index={index} key={key}>
+                        {(provided) => (
+                          <div ref={provided.innerRef} {...provided.draggableProps}>
+                            <HandIconWrapper {...provided.dragHandleProps}>
+                              <PanToolIcon />
+                            </HandIconWrapper>
+                            <Board key={key} boardId={key} toDos={allBoards[key]} />
+                          </div>
+                        )}
+                      </Draggable>
+                    );
+                  })}
+                  {provided.placeholder}
+                </Boards>
+              )}
+            </Droppable>
           </Wrapper>
         </DragDropContext>
       </Container>
@@ -111,6 +136,16 @@ const Boards = styled.div<{ boardCount: number }>`
   margin-top: 180px;
   padding-bottom: 20px;
   grid-template-columns: repeat(${(props) => props.boardCount}, auto);
+`;
+
+const HandIconWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 15px;
+  width: 50px;
+  height: 50px;
+  color: white;
 `;
 
 export const AddListBtn = styled(Button)`
