@@ -14,7 +14,6 @@ import Garbage from './components/Garbage';
 import { initialTheme } from './theme';
 import GlobalStyles from './styles';
 import PickColor from './components/PickColor';
-import PanToolIcon from '@mui/icons-material/PanTool';
 
 function App() {
   const [allBoards, setAllBoardsToDos] = useRecoilState(toDoState);
@@ -76,6 +75,7 @@ function App() {
       setIsVisible((visible) => !visible);
     }
   };
+
   return (
     <ThemeProvider theme={initialTheme(bgColor)}>
       <GlobalStyles />
@@ -97,9 +97,7 @@ function App() {
                       <Draggable draggableId={key} index={index} key={key}>
                         {(provided) => (
                           <div ref={provided.innerRef} {...provided.draggableProps}>
-                            <HandIconWrapper {...provided.dragHandleProps}>
-                              <PanToolIcon />
-                            </HandIconWrapper>
+                            <HandIconWrapper {...provided.dragHandleProps} />
                             <Board key={key} boardId={key} toDos={allBoards[key]} />
                           </div>
                         )}
@@ -139,11 +137,15 @@ const Boards = styled.div<{ boardCount: number }>`
 `;
 
 const HandIconWrapper = styled.div`
+  background-color: ${(props) => props.theme.bgColor};
+  box-shadow: 1px 2px 5px 0px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 1px 2px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 1px 2px 5px 0px rgba(0, 0, 0, 0.75);
   display: flex;
   justify-content: center;
   align-items: center;
   margin-left: 15px;
-  width: 50px;
+  width: 300px;
   height: 50px;
   color: white;
 `;

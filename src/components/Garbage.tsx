@@ -1,6 +1,5 @@
 import { Droppable } from 'react-beautiful-dnd';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { FcEmptyTrash, FcFullTrash } from 'react-icons/fc';
 import styled from 'styled-components';
 
 function Garbage() {
@@ -9,7 +8,7 @@ function Garbage() {
       {(provided, snapshots) => {
         return (
           <IconContainer ref={provided.innerRef} {...provided.droppableProps} isDraggingOver={snapshots.isDraggingOver}>
-            {snapshots.isDraggingOver ? <DeleteIcon sx={sx} /> : <DeleteOutlineIcon sx={sx} />}
+            {snapshots.isDraggingOver ? <FcFullTrash /> : <FcEmptyTrash />}
           </IconContainer>
         );
       }}
