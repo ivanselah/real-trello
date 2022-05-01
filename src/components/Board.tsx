@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { removeModalIsVisible, selectedBoard, StateProps, toDoState } from '../atoms';
-import { Draggable, Droppable } from 'react-beautiful-dnd';
+import { removeModalIsVisible, selectedBoard, StateProps, toDoState, VisibleState } from '../atoms';
+import { Droppable } from 'react-beautiful-dnd';
 import DraggableCard from './DraggableCard';
 import { useForm } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
@@ -19,7 +19,29 @@ type CardInputs = {
   card: string;
 };
 
-function DropDown({ handleRemove, boardId, handleClose }: { handleRemove: (boardId: string) => void; boardId: string; handleClose: () => void }) {
+type CurrentActions = 'delete' | 'modification';
+
+function DropDown({ handleRemove, boardId, handleClose }: { handleRemove: () => void; boardId: string; handleClose: () => void }) {
+  const setIsVisible = useSetRecoilState(VisibleState);
+  const setSelectedBoardId = useSetRecoilState(selectedBoard);
+
+  const currentTargetBoard = (action: CurrentActions) => {
+    switch (action) {
+      case 'delete': {
+        handleRemove();
+        break;
+      }
+      case 'modification': {
+        setIsVisible({ visible: true, from: 'boardBtn' });
+        break;
+      }
+      default:
+        break;
+    }
+    setSelectedBoardId(boardId);
+    handleClose();
+  };
+
   return (
     <DropDownContainer>
       <Navigator>
@@ -29,7 +51,8 @@ function DropDown({ handleRemove, boardId, handleClose }: { handleRemove: (board
       </Navigator>
       <BorderLine></BorderLine>
       <MenuList>
-        <li onClick={() => handleRemove(boardId)}>Delete...</li>
+        <li onClick={() => currentTargetBoard('delete')}>보드삭제...</li>
+        <li onClick={() => currentTargetBoard('modification')}>보드타이틀수정...</li>
       </MenuList>
     </DropDownContainer>
   );
@@ -78,6 +101,10 @@ const MenuList = styled.ul`
   color: white;
   font-weight: 400;
   padding: 15px;
+  li {
+    padding: 5px;
+    margin-bottom: 5px;
+  }
   li:hover {
     background-color: rgba(255, 255, 255, 0.1);
   }
@@ -88,7 +115,6 @@ function Board({ boardId, toDos }: BoardsProps) {
   const [addFormIsVisible, setAddFormIsVisible] = useState(false);
   const setTodosState = useSetRecoilState(toDoState);
   const setIsVisible = useSetRecoilState(removeModalIsVisible);
-  const setSelectedBoardId = useSetRecoilState(selectedBoard);
   const { register, handleSubmit, getValues, setValue, setFocus } = useForm<CardInputs>();
   const [isLoad, setIsLoad] = useState(false);
   const [isDropDownVisible, setIsDropDownVisible] = useState(false);
@@ -99,9 +125,8 @@ function Board({ boardId, toDos }: BoardsProps) {
     }, 0);
   }, []);
 
-  const handleRemove = (boardId: string) => {
+  const handleRemove = () => {
     setIsVisible(true);
-    setSelectedBoardId(boardId);
   };
 
   const handleClose = () => {
@@ -134,7 +159,7 @@ function Board({ boardId, toDos }: BoardsProps) {
     <>
       {isLoad ? (
         <Container>
-          {isDropDownVisible && <DropDown handleRemove={() => handleRemove(boardId)} boardId={boardId} handleClose={handleClose} />}
+          {isDropDownVisible && <DropDown handleRemove={() => handleRemove()} boardId={boardId} handleClose={handleClose} />}
           <Droppable droppableId={boardId}>
             {(provided, snapshots) => (
               <BoardsWrapper>
@@ -213,7 +238,6 @@ const CustomForm = styled.form<{ addFormIsVisible: boolean }>`
     height: 35px;
     border: none;
     &::placeholder {
-      padding: 10px;
       font-size: 15px;
     }
   }

@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { boardTitleState, ToDoState, toDoState, VisibleState } from '../atoms';
+import { boardTitleState, selectedBoard, ToDoState, toDoState, VisibleState } from '../atoms';
 import { useForm } from 'react-hook-form';
 import { saveTodoInLocalStorage } from '../localStorage.utils';
 import ClearBtn from './ClearBtn';
+import { VscEdit } from 'react-icons/vsc';
 
 type Inputs = {
   boardName: string;
@@ -14,31 +15,64 @@ function FormDialog() {
   const [isVisible, setIsVisible] = useRecoilState(VisibleState);
   const setTodos = useSetRecoilState(toDoState);
   const setBoardTitle = useSetRecoilState(boardTitleState);
+  const [selectedCurrentBoardId, setSelectedCurrentBoardId] = useRecoilState(selectedBoard);
   const { register, handleSubmit, setValue, setFocus } = useForm<Inputs>();
 
-  const handleClose = () => setIsVisible(false);
+  const handleClose = () => {
+    setIsVisible((state) => {
+      return {
+        ...state,
+        visible: false,
+      };
+    });
+    setSelectedCurrentBoardId('');
+  };
 
   const onSumit = ({ boardName }: Inputs): void => {
-    setTodos((todo: ToDoState) => {
-      const result: ToDoState = { [boardName]: [], ...todo };
-      saveTodoInLocalStorage(result);
-      return result;
-    });
-
-    setBoardTitle(boardName);
+    if (!selectedCurrentBoardId) {
+      setTodos((todo: ToDoState) => {
+        const result: ToDoState = { [boardName]: [], ...todo };
+        saveTodoInLocalStorage(result);
+        return result;
+      });
+      setBoardTitle(boardName);
+    } else {
+      setTodos((todos) => {
+        return Object.fromEntries(
+          Object.entries(todos).map((arr) => {
+            if (arr.includes(selectedCurrentBoardId)) {
+              const { 1: boardArray } = arr;
+              return [boardName, boardArray];
+            } else {
+              return arr;
+            }
+          })
+        );
+      });
+    }
     setValue('boardName', '');
     handleClose();
+    setSelectedCurrentBoardId('');
   };
 
   useEffect(() => {
-    isVisible && setFocus('boardName');
-  }, [isVisible, setFocus]);
+    isVisible.visible && setFocus('boardName');
+  }, [isVisible.visible, setFocus]);
 
   return (
     <>
-      <CustomDialog isVisible={isVisible}>
+      <CustomDialog isVisible={isVisible.visible}>
         <ClearBtn onClose={handleClose} />
-        <h1>보드추가</h1>
+        <h1>
+          {isVisible.from === 'globalBtn' ? (
+            '보드추가'
+          ) : (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              {selectedCurrentBoardId && selectedCurrentBoardId}
+              <VscEdit />
+            </div>
+          )}
+        </h1>
         <form className='formContainer' onSubmit={handleSubmit(onSumit)}>
           <input {...register('boardName', { required: true })} type='text' placeholder='보드명을 입력하세요' autoComplete='off' />
         </form>

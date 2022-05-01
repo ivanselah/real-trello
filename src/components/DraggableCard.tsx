@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Draggable } from 'react-beautiful-dnd';
+import { VscEdit } from 'react-icons/vsc';
 
 type DraggableCardProps = {
   toDoId: number;
@@ -14,7 +15,10 @@ function DraggableCard({ toDoId, toDoText, index }: DraggableCardProps) {
       <Draggable draggableId={toDoId + ''} index={index}>
         {(provided, snapshot) => (
           <Card ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} isDragging={snapshot.isDragging}>
-            {toDoText}
+            <div className='card-box'>
+              <p>{toDoText}</p>
+              <CustomVscEdit />
+            </div>
           </Card>
         )}
       </Draggable>
@@ -32,9 +36,25 @@ const Card = styled.li<{ isDragging: boolean }>`
   &:hover {
     background-color: #f1f2f6;
   }
-  word-wrap: break-word;
   transition: opacity 0.5s ease-in-out;
   box-shadow: ${(props) => (props.isDragging ? '1px 2px 5px 0px rgba(0, 0, 0, 0.75)' : 'none')};
+  p {
+    width: 230px;
+    word-wrap: break-word;
+  }
+  .card-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+`;
+
+const CustomVscEdit = styled(VscEdit)`
+  padding: 5px;
+  border-radius: 5px;
+  &:hover {
+    background-color: ${(props) => props.theme.cardColor};
+  }
 `;
 
 export default React.memo(DraggableCard);

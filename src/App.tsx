@@ -72,7 +72,12 @@ function App() {
 
   const openDialog = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (e.target === e.currentTarget) {
-      setIsVisible((visible) => !visible);
+      setIsVisible((state) => {
+        return {
+          visible: !state.visible,
+          from: 'globalBtn',
+        };
+      });
     }
   };
 

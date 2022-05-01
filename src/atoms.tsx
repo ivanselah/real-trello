@@ -38,9 +38,17 @@ export const selectedBoard = atom<string>({
   default: '',
 });
 
-export const VisibleState = atom({
+type VisibleProps = {
+  visible: boolean;
+  from: 'globalBtn' | 'boardBtn';
+};
+
+export const VisibleState = atom<VisibleProps>({
   key: 'visible',
-  default: false,
+  default: {
+    visible: false,
+    from: 'globalBtn',
+  },
 });
 
 export const removeModalIsVisible = atom({
