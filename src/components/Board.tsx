@@ -288,7 +288,6 @@ const ContainerList = styled.ul<{ isDraggingOver: boolean; draggingFromThisWith:
   flex-grow: 1;
   transition: background-color 0.3s ease-in-out;
   padding: 10px;
-  height: calc(100% - 30px);
 `;
 
 export default Board;

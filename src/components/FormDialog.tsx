@@ -85,19 +85,19 @@ const CustomDialog = styled.div<{ isVisible: boolean }>`
   background-color: #dfe6e9;
   position: absolute;
   right: 0;
-  transform: translate(-20%, 100%);
+  transform: translate(-18%, 70%);
   min-width: 250px;
-  min-height: 100px;
+  min-height: 150px;
   padding: 25px 20px;
   border-radius: 10px;
   opacity: ${(props) => (props.isVisible ? '1' : '0')};
   z-index: ${(props) => (!props.isVisible ? '-1' : '2')};
-  transition: opacity 0.3s ease-in-out;
   box-shadow: 1px 2px 5px 0px rgba(0, 0, 0, 0.75);
   -webkit-box-shadow: 1px 2px 5px 0px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 1px 2px 5px 0px rgba(0, 0, 0, 0.75);
 
   .formContainer {
+    padding-right: 0;
     height: 50px;
     background-color: ${(props) => props.theme.bgColor};
   }
@@ -110,7 +110,7 @@ const CustomDialog = styled.div<{ isVisible: boolean }>`
   }
 
   input {
-    width: 100%;
+    width: 300px;
     height: 35px;
     border: none;
     text-align: center;
