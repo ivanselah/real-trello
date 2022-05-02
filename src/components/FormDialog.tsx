@@ -19,6 +19,7 @@ function FormDialog() {
   const { register, handleSubmit, setValue, setFocus } = useForm<Inputs>();
 
   const handleClose = () => {
+    setValue('boardName', '');
     setIsVisible((state) => {
       return {
         ...state,
@@ -50,7 +51,6 @@ function FormDialog() {
         );
       });
     }
-    setValue('boardName', '');
     handleClose();
     setSelectedCurrentBoardId('');
   };
