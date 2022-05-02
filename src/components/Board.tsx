@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { removeModalIsVisible, selectedBoard, StateProps, VisibleState } from '../atoms';
 import { Droppable } from 'react-beautiful-dnd';
@@ -107,15 +107,28 @@ const MenuList = styled.ul`
 `;
 
 function Board({ boardId, toDos }: BoardsProps) {
-  const setIsVisible = useSetRecoilState(removeModalIsVisible);
   const [isLoad, setIsLoad] = useState(false);
+  const [addFormIsVisible, setAddFormIsVisible] = useState(false);
+  const [cardEditFormIsVisible, setCardEditFormIsVisible] = useState(false);
+  const [selectedCard, setSelectedCard] = useState<StateProps>({ id: 0, text: '' });
   const [isDropDownVisible, setIsDropDownVisible] = useState(false);
+  const setIsVisible = useSetRecoilState(removeModalIsVisible);
 
   useEffect(() => {
     setTimeout(() => {
       setIsLoad(true);
     }, 0);
   }, []);
+
+  const eitFormHandleClose = () => {
+    setAddFormIsVisible((visible) => !visible);
+    setCardEditFormIsVisible((visible) => {
+      if (visible) {
+        setAddFormIsVisible(false);
+        return false;
+      } else return true;
+    });
+  };
 
   const handleRemove = () => {
     setIsVisible(true);
@@ -145,14 +158,28 @@ function Board({ boardId, toDos }: BoardsProps) {
                   draggingFromThisWith={Boolean(snapshots.draggingFromThisWith)}
                 >
                   {toDos.map((toDo, index) => (
-                    <DraggableCard key={toDo.id} index={index} toDoId={toDo.id} toDoText={toDo.text} />
+                    <DraggableCard
+                      key={toDo.id}
+                      index={index}
+                      toDoId={toDo.id}
+                      toDoText={toDo.text}
+                      eitFormHandleClose={eitFormHandleClose}
+                      setSelectedCard={setSelectedCard}
+                    />
                   ))}
                   {provided.placeholder}
                 </ContainerList>
               </BoardsWrapper>
             )}
           </Droppable>
-          <AddCardForm boardId={boardId} />
+          <AddCardForm
+            boardId={boardId}
+            addFormIsVisible={addFormIsVisible}
+            setAddFormIsVisible={setAddFormIsVisible}
+            cardEditFormIsVisible={cardEditFormIsVisible}
+            eitFormHandleClose={eitFormHandleClose}
+            selectedCard={selectedCard}
+          />
         </Container>
       ) : null}
     </>

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { boardTitleState, selectedBoard, ToDoState, toDoState, VisibleState } from '../atoms';

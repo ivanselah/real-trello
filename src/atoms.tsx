@@ -33,9 +33,9 @@ export const boardTitleState = atom<string>({
   default: '',
 });
 
-export const editFormIsVisible = atom({
-  key: 'editFormIsVisible',
-  default: false,
+export const selectedCard = atom<string>({
+  key: 'selectedCard',
+  default: '',
 });
 
 export const selectedBoard = atom<string>({

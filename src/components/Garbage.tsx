@@ -7,9 +7,11 @@ function Garbage() {
     <Droppable droppableId='garbage'>
       {(provided, snapshots) => {
         return (
-          <IconContainer ref={provided.innerRef} {...provided.droppableProps} isDraggingOver={snapshots.isDraggingOver}>
-            {snapshots.isDraggingOver ? <FcFullTrash /> : <FcEmptyTrash />}
-          </IconContainer>
+          <>
+            <IconContainer ref={provided.innerRef} {...provided.droppableProps} isDraggingOver={snapshots.isDraggingOver}>
+              {snapshots.isDraggingOver ? <FcFullTrash /> : <FcEmptyTrash />}
+            </IconContainer>
+          </>
         );
       }}
     </Droppable>
@@ -30,9 +32,5 @@ const IconContainer = styled.div<{ isDraggingOver: boolean }>`
   background-color: ${(props) => (props.isDraggingOver ? 'rgba(233, 233, 233, 0.3)' : 'none')};
   transition: background 0.3s ease-in-out;
 `;
-
-const sx = {
-  fontSize: '80px',
-};
 
 export default Garbage;

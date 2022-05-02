@@ -1,26 +1,22 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { Draggable } from 'react-beautiful-dnd';
 import { VscEdit } from 'react-icons/vsc';
-import { useRecoilState } from 'recoil';
-import { editFormIsVisible } from '../atoms';
+import { StateProps } from '../atoms';
 
 type DraggableCardProps = {
   toDoId: number;
   toDoText: string;
   index: number;
+  eitFormHandleClose: () => void;
+  setSelectedCard: React.Dispatch<React.SetStateAction<StateProps>>;
 };
 
-function DraggableCard({ toDoId, toDoText, index }: DraggableCardProps) {
-  const [cardEditFormIsVisible, setCardEditFormIsVisible] = useRecoilState(editFormIsVisible);
-  const [todoText, setTodoText] = useState(toDoText);
-  const [isClickEditBtn, setIsClickEditBtn] = useState(false);
+function DraggableCard({ toDoId, toDoText, index, eitFormHandleClose, setSelectedCard }: DraggableCardProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const cardEditHandler = () => {
     inputRef.current?.focus();
-    setIsClickEditBtn(true);
-    setCardEditFormIsVisible(true);
   };
 
   return (
@@ -30,7 +26,12 @@ function DraggableCard({ toDoId, toDoText, index }: DraggableCardProps) {
           <Card ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} isDragging={snapshot.isDragging}>
             <div className='card-box' onClick={cardEditHandler}>
               <p>{toDoText}</p>
-              <CustomVscEdit />
+              <CustomVscEdit
+                onClick={() => {
+                  eitFormHandleClose();
+                  setSelectedCard({ id: toDoId, text: toDoText });
+                }}
+              />
             </div>
           </Card>
         )}
