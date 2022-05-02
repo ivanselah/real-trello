@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/real-trello/static/js/main.0d37a4b7.js",
+    "main.js": "/real-trello/static/js/main.cee629e0.js",
     "index.html": "/real-trello/index.html",
-    "main.0d37a4b7.js.map": "/real-trello/static/js/main.0d37a4b7.js.map"
+    "main.cee629e0.js.map": "/real-trello/static/js/main.cee629e0.js.map"
   },
   "entrypoints": [
-    "static/js/main.0d37a4b7.js"
+    "static/js/main.cee629e0.js"
   ]
 }
