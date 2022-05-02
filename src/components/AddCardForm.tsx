@@ -42,8 +42,9 @@ function AddCardForm({
 
   const onClickAdd = useCallback(() => {
     setAddFormIsVisible((visible) => !visible);
+    setValue('card', '');
     setFocus('card');
-  }, [setFocus, setAddFormIsVisible]);
+  }, [setValue, setFocus, setAddFormIsVisible]);
 
   useEffect(() => {
     cardEditFormIsVisible && onClickAdd();
@@ -80,6 +81,7 @@ function AddCardForm({
           }),
         };
       });
+
       eitFormHandleClose();
     }
     setValue('card', '');

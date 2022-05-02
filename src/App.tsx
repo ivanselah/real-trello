@@ -22,7 +22,6 @@ function App() {
   const setIsVisible = useSetRecoilState(VisibleState);
 
   const onDragEnd = ({ destination, source, type }: DropResult) => {
-    console.log(destination, source);
     if (!destination) return;
     if (source.droppableId === 'boards-box' && type === 'COLUMN') {
       const newAllBoardsArray = Object.entries(allBoards);
