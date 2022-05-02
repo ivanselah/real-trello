@@ -1,22 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { removeModalIsVisible, selectedBoard, StateProps, toDoState, VisibleState } from '../atoms';
+import { removeModalIsVisible, selectedBoard, StateProps, VisibleState } from '../atoms';
 import { Droppable } from 'react-beautiful-dnd';
 import DraggableCard from './DraggableCard';
-import { useForm } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
-import Button from '@mui/material/Button';
-import { saveTodoInLocalStorage } from '../localStorage.utils';
+
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ClearIcon from '@mui/icons-material/Clear';
+import AddCardForm from './AddCardForm';
 
 type BoardsProps = {
   boardId: string;
   toDos: StateProps[];
-};
-
-type CardInputs = {
-  card: string;
 };
 
 type CurrentActions = 'delete' | 'modification';
@@ -112,10 +107,7 @@ const MenuList = styled.ul`
 `;
 
 function Board({ boardId, toDos }: BoardsProps) {
-  const [addFormIsVisible, setAddFormIsVisible] = useState(false);
-  const setTodosState = useSetRecoilState(toDoState);
   const setIsVisible = useSetRecoilState(removeModalIsVisible);
-  const { register, handleSubmit, getValues, setValue, setFocus } = useForm<CardInputs>();
   const [isLoad, setIsLoad] = useState(false);
   const [isDropDownVisible, setIsDropDownVisible] = useState(false);
 
@@ -133,28 +125,6 @@ function Board({ boardId, toDos }: BoardsProps) {
     setIsDropDownVisible((visible) => !visible);
   };
 
-  const onClickAdd = () => {
-    setAddFormIsVisible((visible) => !visible);
-    setFocus('card');
-  };
-
-  const onSubmit = () => {
-    const { card } = getValues();
-    const newObject = {
-      id: Date.now(),
-      text: card,
-    };
-    setTodosState((todos) => {
-      const newTodos = {
-        ...todos,
-        [boardId]: [...todos[boardId], newObject],
-      };
-      saveTodoInLocalStorage(newTodos);
-      return newTodos;
-    });
-    setValue('card', '');
-    onClickAdd();
-  };
   return (
     <>
       {isLoad ? (
@@ -182,12 +152,7 @@ function Board({ boardId, toDos }: BoardsProps) {
               </BoardsWrapper>
             )}
           </Droppable>
-          <TextareaContainer>
-            <AddContentBtn onClick={onClickAdd}>+ 카드 추가</AddContentBtn>
-            <CustomForm addFormIsVisible={addFormIsVisible} onSubmit={handleSubmit(onSubmit)}>
-              <input {...register('card', { required: true })} autoComplete='off' type='text' placeholder='여기에 내용을 입력하세요' />
-            </CustomForm>
-          </TextareaContainer>
+          <AddCardForm boardId={boardId} />
         </Container>
       ) : null}
     </>
@@ -219,30 +184,6 @@ const BoardsWrapper = styled.div`
   flex-direction: column;
 `;
 
-const TextareaContainer = styled.div`
-  background-color: ${(props) => props.theme.boardColor};
-  padding: 10px;
-`;
-
-const CustomForm = styled.form<{ addFormIsVisible: boolean }>`
-  padding-top: 10px;
-  padding-right: 5px;
-  height: ${(props) => !props.addFormIsVisible && '0px'};
-  input {
-    opacity: ${(props) => (props.addFormIsVisible ? '1' : '0')};
-    text-align: left;
-    min-height: 70px;
-    border-radius: 5px;
-    background-color: ${(props) => props.theme.cardColor};
-    min-width: 100%;
-    height: 35px;
-    border: none;
-    &::placeholder {
-      font-size: 15px;
-    }
-  }
-`;
-
 const TitleContainer = styled.div`
   display: flex;
   justify-content: space-between;
@@ -270,17 +211,6 @@ const CardCount = styled.p`
   font-weight: bold;
   padding: 0 15px;
   color: ${(props) => props.theme.bgColor};
-`;
-
-const AddContentBtn = styled(Button)`
-  width: 100px;
-  height: 38px;
-  z-index: 1;
-  color: #ffffff;
-  background-color: ${(props) => props.theme.bgColor};
-  &:hover {
-    background-color: ${(props) => props.theme.bgColor};
-  }
 `;
 
 const ContainerList = styled.ul<{ isDraggingOver: boolean; draggingFromThisWith: boolean }>`

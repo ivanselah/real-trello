@@ -1,7 +1,9 @@
 import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 import { Draggable } from 'react-beautiful-dnd';
-import { VscEdit, VscSave } from 'react-icons/vsc';
+import { VscEdit } from 'react-icons/vsc';
+import { useRecoilState } from 'recoil';
+import { editFormIsVisible } from '../atoms';
 
 type DraggableCardProps = {
   toDoId: number;
@@ -10,6 +12,7 @@ type DraggableCardProps = {
 };
 
 function DraggableCard({ toDoId, toDoText, index }: DraggableCardProps) {
+  const [cardEditFormIsVisible, setCardEditFormIsVisible] = useRecoilState(editFormIsVisible);
   const [todoText, setTodoText] = useState(toDoText);
   const [isClickEditBtn, setIsClickEditBtn] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -17,6 +20,7 @@ function DraggableCard({ toDoId, toDoText, index }: DraggableCardProps) {
   const cardEditHandler = () => {
     inputRef.current?.focus();
     setIsClickEditBtn(true);
+    setCardEditFormIsVisible(true);
   };
 
   return (
@@ -25,44 +29,18 @@ function DraggableCard({ toDoId, toDoText, index }: DraggableCardProps) {
         {(provided, snapshot) => (
           <Card ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} isDragging={snapshot.isDragging}>
             <div className='card-box' onClick={cardEditHandler}>
-              {isClickEditBtn ? <p></p> : <p>{toDoText}</p>}
+              <p>{toDoText}</p>
               <CustomVscEdit />
             </div>
           </Card>
         )}
       </Draggable>
-      <EditForm onSubmit={(e) => e.preventDefault()}>
-        <div className='card-box'>
-          {isClickEditBtn && <input ref={inputRef} type='text' value={todoText} onChange={(e) => setTodoText(e.currentTarget.value)} />}
-        </div>
-      </EditForm>
     </CardContainer>
   );
 }
 
 const CardContainer = styled.div`
   position: relative;
-`;
-
-const EditForm = styled.form`
-  position: absolute;
-  top: 0;
-  box-sizing: border-box;
-  background-color: inherit;
-  border: none;
-  input {
-    border: 1px solid ${(props) => props.theme.bgColor};
-    background-color: ${(props) => props.theme.bgColor};
-    border-radius: 5px;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    width: 210px;
-    height: 25px;
-    color: white;
-    padding: 10px;
-    margin-bottom: 0;
-    font-size: 16px;
-  }
 `;
 
 const Card = styled.li<{ isDragging: boolean }>`
